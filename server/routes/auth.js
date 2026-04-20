@@ -41,7 +41,7 @@ router.post("/verify", async (req, res) => {
 This is a test authentication request.
 No funds will be moved or accessed.
 
-Nonce: ${nonce}
+Nonce: ${user.nonce}
 `;
 
     const recoveredAddress = ethers.verifyMessage(message, signature);
@@ -58,7 +58,7 @@ Nonce: ${nonce}
     res.status(200).json({ success: true, message: "verified successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: error.messgae });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
