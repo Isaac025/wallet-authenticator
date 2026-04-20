@@ -8,19 +8,19 @@ const router = express.Router();
 router.post("/nonce", async (req, res) => {
   try {
     const { address } = req.body;
-    const user = await USER.findOne({ address });
+    let user = await USER.findOne({ address });
 
     if (!user) {
       user = await USER.create({
         address,
-        nonce: Math.random().toString(36).subString(2),
+        nonce: Math.random().toString(36).substring(2),
       });
     }
 
     res.status(200).json({ success: true, nonce: user.nonce });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: error.messgae });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -30,6 +30,10 @@ router.post("/verify", async (req, res) => {
     const { address, signature } = req.body;
 
     const user = await USER.findOne({ address });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
 
     const message = `Login nonce: ${user.nonce}`;
 

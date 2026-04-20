@@ -19,9 +19,12 @@ export default function WalletLogin() {
 
       // 2. Get nonce from backend
       setStatus("Fetching nonce...");
-      const { data } = await axios.post("http://localhost:5000/auth/nonce", {
-        address,
-      });
+      const { data } = await axios.post(
+        "https://wallet-authenticator.onrender.com/auth/nonce",
+        {
+          address,
+        },
+      );
       const nonce = data.nonce;
 
       // 3. Sign message
@@ -33,10 +36,13 @@ export default function WalletLogin() {
 
       // 4. Send signature to backend
       setStatus("Verifying signature...");
-      const res = await axios.post("http://localhost:5000/auth/verify", {
-        address,
-        signature,
-      });
+      const res = await axios.post(
+        "https://wallet-authenticator.onrender.com/auth/verify",
+        {
+          address,
+          signature,
+        },
+      );
 
       if (res.data.success) {
         setStatus("Login successful!");
