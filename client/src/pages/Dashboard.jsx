@@ -2,12 +2,12 @@ import React from "react";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto">
         {/* Main Card */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           {/* Top Accent Bar */}
-          <div className="h-2 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500" />
+          <div className="h-2 bg-linear-to-r from-green-500 via-emerald-500 to-teal-500" />
 
           <div className="px-8 py-10 text-center">
             {/* Success Icon */}

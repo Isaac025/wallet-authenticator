@@ -1,57 +1,81 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import axios from "axios";
+import EthereumProvider from "@walletconnect/ethereum-provider";
 
-export default function WalletLogin() {
+export default function WalletLogin({ setAuth }) {
   const [status, setStatus] = useState("");
   const [address, setAddress] = useState("");
 
+  const navigate = useNavigate();
+
   async function loginWithWallet() {
+    let provider;
+
     try {
       setStatus("Connecting wallet...");
 
-      // 1. Connect wallet
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const address = accounts[0];
+      // ✅ 1. Detect provider
+      if (window.ethereum) {
+        // Desktop or MetaMask mobile browser
+        provider = new ethers.BrowserProvider(window.ethereum);
+
+        await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+      } else {
+        // ✅ Mobile fallback (WalletConnect)
+        setStatus("Opening wallet...");
+
+        const wcProvider = await EthereumProvider.init({
+          projectId: import.meta.env.VITE_WALLETCONNECT_ID,
+          chains: [11155111], // Ethereum 11155111 for testnet
+          showQrModal: true,
+        });
+
+        await wcProvider.connect();
+
+        provider = new ethers.BrowserProvider(wcProvider);
+      }
+
+      // ✅ 2. Get signer + address
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
       setAddress(address);
 
-      // 2. Get nonce from backend
+      // ✅ 3. Get nonce
       setStatus("Fetching nonce...");
       const { data } = await axios.post(
         "https://wallet-authenticator.onrender.com/auth/nonce",
-        {
-          address,
-        },
+        { address },
       );
+
       const nonce = data.nonce;
 
-      // 3. Sign message
+      // ✅ 4. Sign message
       setStatus("Signing message...");
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
       const message = `Login nonce: ${nonce}`;
       const signature = await signer.signMessage(message);
 
-      // 4. Send signature to backend
+      // ✅ 5. Verify
       setStatus("Verifying signature...");
       const res = await axios.post(
         "https://wallet-authenticator.onrender.com/auth/verify",
-        {
-          address,
-          signature,
-        },
+        { address, signature },
       );
 
       if (res.data.success) {
         setStatus("Login successful!");
+        localStorage.setItem("auth", "true");
+        setAuth(true);
+        navigate("/dashboard");
       } else {
         setStatus("Login failed.");
       }
     } catch (err) {
       console.error(err);
-      setStatus("Error during login.");
+      setStatus(err.response?.data?.error || err.message);
     }
   }
 
@@ -64,7 +88,7 @@ export default function WalletLogin() {
         </p>
         <button
           onClick={loginWithWallet}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition cursor-pointer"
         >
           Connect Wallet
         </button>
