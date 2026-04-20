@@ -35,7 +35,7 @@ router.post("/verify", async (req, res) => {
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    const message = `Login nonce: ${user.nonce}`;
+    const message = `🔐 Web3Auth Login This is a test authentication request. No funds will be moved or accessed. Nonce: ${nonce}`;
 
     const recoveredAddress = ethers.verifyMessage(message, signature);
 

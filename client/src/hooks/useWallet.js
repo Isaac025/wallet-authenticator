@@ -66,7 +66,7 @@ export default function useWallet(setAuth, navigate) {
 
       // 2. Sign message
       setStatus("Signing message...");
-      const message = `Login nonce: ${nonce}`;
+      const message = `🔐 Web3Auth Login This is a test authentication request. No funds will be moved or accessed. Nonce: ${nonce}`;
       const signature = await signer.signMessage(message);
 
       // 3. Verify
