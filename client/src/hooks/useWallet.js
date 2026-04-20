@@ -33,6 +33,20 @@ export default function useWallet(setAuth, navigate) {
         });
 
         await wcProvider.connect();
+
+        // 🔥 IMPORTANT: ensure session is ready
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        // 🔥 FORCE correct chain (Sepolia)
+        try {
+          await wcProvider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xaa36a7" }],
+          });
+        } catch (err) {
+          console.warn("Chain switch failed or already correct:", err);
+        }
+
         ethProvider = new ethers.BrowserProvider(wcProvider);
       }
 
@@ -66,7 +80,14 @@ export default function useWallet(setAuth, navigate) {
 
       // 2. Sign message
       setStatus("Signing message...");
-      const message = `🔐 Web3Auth Login This is a test authentication request. No funds will be moved or accessed. Nonce: ${nonce}`;
+      const message = `
+🔐 Web3Auth Login
+
+This is a test authentication request.
+No funds will be moved or accessed.
+
+Nonce: ${nonce}
+`;
       const signature = await signer.signMessage(message);
 
       // 3. Verify
