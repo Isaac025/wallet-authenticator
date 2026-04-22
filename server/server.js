@@ -4,13 +4,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = process.env.PORT || 3000;
 const authRouter = require("./routes/auth");
-
+const paymentRouter = require("./routes/payment");
 const app = express();
 
 //middleware
 app.use(express.json());
 app.use(cors());
 app.use("/auth", authRouter);
+app.use("/payment", paymentRouter);
 
 //routes
 app.get("/", (req, res) => {
