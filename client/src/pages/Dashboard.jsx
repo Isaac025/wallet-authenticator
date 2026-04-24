@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const redirect = useNavigate();
+
   return (
     <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto">
@@ -38,7 +41,10 @@ export default function Dashboard() {
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <button className="w-full bg-green-600 hover:bg-green-700 transition-all text-white font-semibold py-4 px-6 rounded-2xl text-lg shadow-lg shadow-green-200 active:scale-95">
+              <button
+                onClick={() => redirect("/payment")}
+                className="w-full bg-green-600 hover:bg-green-700 transition-all text-white font-semibold py-4 px-6 rounded-2xl text-lg shadow-lg shadow-green-200 active:scale-95"
+              >
                 Go to Dashboard
               </button>
 

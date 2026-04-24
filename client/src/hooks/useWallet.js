@@ -100,8 +100,13 @@ Nonce: ${nonce}
       if (res.data.success) {
         setStatus("Login successful!");
         localStorage.setItem("auth", "true");
-        setAuth(true);
-        navigate("/dashboard");
+        if (typeof setAuth === "function") {
+          setAuth(true);
+        }
+
+        if (typeof navigate === "function") {
+          navigate("/dashboard");
+        }
       } else {
         setStatus("Login failed");
       }
@@ -120,7 +125,9 @@ Nonce: ${nonce}
 
       setAddress("");
       setProvider(null);
-      setAuth(false);
+      if (typeof setAuth === "function") {
+        setAuth(false);
+      }
       localStorage.removeItem("auth");
       setStatus("Disconnected");
     } catch (err) {
@@ -133,5 +140,6 @@ Nonce: ${nonce}
     status,
     login,
     disconnect,
+    provider,
   };
 }

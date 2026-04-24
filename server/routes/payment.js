@@ -20,7 +20,7 @@ router.post("/verify-payment", async (req, res) => {
     }
 
     //check receiver
-    if (tx.to.toLowerCase() !== receiver.toLowerCase()) {
+    if (!tx.to || tx.to.toLowerCase() !== receiver.toLowerCase()) {
       return res.status(400).json({ success: false, error: "Wrong recipent" });
     }
 
@@ -43,8 +43,11 @@ router.post("/verify-payment", async (req, res) => {
 
     return res.status(200).json({ success: true, message: "Payment Verified" });
   } catch (error) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error("Payment verification error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
   }
 });
 

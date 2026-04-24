@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WalletLogin from "./pages/WalletLogin";
 import Dashboard from "./pages/Dashboard";
+import PaymentPage from "./pages/PaymentPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -17,6 +18,14 @@ function App() {
           element={
             <ProtectedRoute isAuth={isAuth}>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute isAuth={isAuth}>
+              <PaymentPage setAuth={setAuth} />
             </ProtectedRoute>
           }
         />
